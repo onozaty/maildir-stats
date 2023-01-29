@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 
 	"github.com/emersion/go-imap/utf7"
 )
@@ -12,6 +14,47 @@ type AggregateResult struct {
 	Name      string
 	Count     int32
 	TotalSize int64
+}
+
+func AggregateMailFolders(rootMailFolderPath string) ([]*AggregateResult, error) {
+
+	aggregateResults := []*AggregateResult{}
+
+	// ルート(INBOX)
+	rootAggregateResult, err := aggregateMailFolder(rootMailFolderPath, "")
+	if err != nil {
+		return nil, err
+	}
+	aggregateResults = append(aggregateResults, rootAggregateResult)
+
+	// その他メールフォルダ
+	entries, err := os.ReadDir(rootMailFolderPath)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, entry := range entries {
+		// ディレクトリの先頭が"."になっているものがメールフォルダ
+		if entry.IsDir() && strings.HasPrefix(entry.Name(), ".") {
+			mailFolderName, err := decodeFolderName(entry.Name()[1:])
+			if err != nil {
+				return nil, err
+			}
+
+			subAggregateResult, err := aggregateMailFolder(filepath.Join(rootMailFolderPath, entry.Name()), mailFolderName)
+			if err != nil {
+				return nil, err
+			}
+
+			aggregateResults = append(aggregateResults, subAggregateResult)
+		}
+	}
+
+	sort.Slice(aggregateResults, func(i, j int) bool {
+		return aggregateResults[i].Name < aggregateResults[j].Name
+	})
+
+	return aggregateResults, nil
 }
 
 func aggregateMailFolder(mailFolderPath string, mailFolderName string) (*AggregateResult, error) {
