@@ -71,10 +71,13 @@ func TestAggregateMailFolders(t *testing.T) {
 	}
 
 	// ACT
-	results, err := AggregateMailFolders(temp)
+	aggregator := NewFolderAggregator()
+	err := AggregateMailFolders(temp, []Aggregator{aggregator})
+	results := aggregator.Results()
 
 	// ASSERT
 	require.NoError(t, err)
+
 	assert.Equal(
 		t,
 		[]*AggregateResult{
@@ -120,7 +123,8 @@ func TestAggregateMailFolders_RootFolderNotFound(t *testing.T) {
 	rootMailFolderPath := filepath.Join(temp, "xx") // 存在しないフォルダ
 
 	// ACT
-	_, err := AggregateMailFolders(rootMailFolderPath)
+	aggregator := NewFolderAggregator()
+	err := AggregateMailFolders(rootMailFolderPath, []Aggregator{aggregator})
 
 	// ASSERT
 	require.Error(t, err)
@@ -149,7 +153,8 @@ func TestAggregateMailFolders_InvalidFolderName(t *testing.T) {
 	}
 
 	// ACT
-	_, err := AggregateMailFolders(temp)
+	aggregator := NewFolderAggregator()
+	err := AggregateMailFolders(temp, []Aggregator{aggregator})
 
 	// ASSERT
 	assert.EqualError(t, err, "&A is invalid folder name: utf7: invalid UTF-7")
@@ -172,7 +177,8 @@ func TestAggregateMailFolders_SubFolderAggregateFailed(t *testing.T) {
 	}
 
 	// ACT
-	_, err := AggregateMailFolders(temp)
+	aggregator := NewFolderAggregator()
+	err := AggregateMailFolders(temp, []Aggregator{aggregator})
 
 	// ASSERT
 	require.Error(t, err)
@@ -200,18 +206,22 @@ func TestAggregateMailFolder(t *testing.T) {
 	})
 
 	// ACT
-	result, err := aggregateMailFolder(temp, "INBOX")
+	aggregator := NewFolderAggregator()
+	err := aggregateMailFolder(temp, "INBOX", []Aggregator{aggregator})
+	results := aggregator.Results()
 
 	// ASSERT
 	require.NoError(t, err)
 	assert.Equal(
 		t,
-		&AggregateResult{
-			Name:      "INBOX",
-			Count:     4,
-			TotalSize: 18,
+		[]*AggregateResult{
+			{
+				Name:      "INBOX",
+				Count:     4,
+				TotalSize: 18,
+			},
 		},
-		result,
+		results,
 	)
 }
 
@@ -230,7 +240,8 @@ func TestAggregateMailFolder_SubFolderNotFound(t *testing.T) {
 	createFile(t, filepath.Join(temp, "xxx"), "xxx")
 
 	// ACT
-	_, err := aggregateMailFolder(temp, "INBOX")
+	aggregator := NewFolderAggregator()
+	err := aggregateMailFolder(temp, "INBOX", []Aggregator{aggregator})
 
 	// ASSERT
 	require.Error(t, err)
