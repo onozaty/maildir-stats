@@ -1,10 +1,12 @@
 package maildir
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -252,6 +254,49 @@ func TestDecodeFolderName_DecodeError(t *testing.T) {
 	assert.EqualError(t, err, "&AAA is invalid folder name: utf7: invalid UTF-7")
 }
 
+func TestMailInfoOf(t *testing.T) {
+
+	temp := t.TempDir()
+
+	{
+		// ARRANGE
+		fileInfo := createFile(t, filepath.Join(temp, "1491941793.10000000.example.com.XXXXX"), "1")
+
+		// ACT
+		mail := mailInfoOf(fileInfo)
+
+		// ASSERT
+		assert.Equal(t, int64(1), mail.size)
+		assert.Equal(t, "2017-04-11T20:16:33Z", mail.time.UTC().Format(time.RFC3339))
+	}
+
+	{
+		// ARRANGE
+		// -> 区切り文字の"."なし
+		fileInfo := createFile(t, filepath.Join(temp, "1491941793"), "123")
+
+		// ACT
+		mail := mailInfoOf(fileInfo)
+
+		// ASSERT
+		assert.Equal(t, int64(3), mail.size)
+		assert.Equal(t, "2017-04-11T20:16:33Z", mail.time.UTC().Format(time.RFC3339))
+	}
+
+	{
+		// ARRANGE
+		// -> 数字ではない
+		fileInfo := createFile(t, filepath.Join(temp, "xxxxxx.10000000.example.com.aaa"), "")
+
+		// ACT
+		mail := mailInfoOf(fileInfo)
+
+		// ASSERT
+		assert.Equal(t, int64(0), mail.size)
+		assert.Equal(t, "1970-01-01T00:00:00Z", mail.time.UTC().Format(time.RFC3339))
+	}
+}
+
 func createDir(t *testing.T, parent string, name string) string {
 
 	dir := filepath.Join(parent, name)
@@ -261,7 +306,7 @@ func createDir(t *testing.T, parent string, name string) string {
 	return dir
 }
 
-func createFile(t *testing.T, path string, content string) {
+func createFile(t *testing.T, path string, content string) fs.FileInfo {
 
 	file, err := os.Create(path)
 	require.NoError(t, err)
@@ -269,8 +314,13 @@ func createFile(t *testing.T, path string, content string) {
 	_, err = file.Write([]byte(content))
 	require.NoError(t, err)
 
+	info, err := file.Stat()
+	require.NoError(t, err)
+
 	err = file.Close()
 	require.NoError(t, err)
+
+	return info
 }
 
 func createMailFolder(t *testing.T, baseDir string, mails []mail) {

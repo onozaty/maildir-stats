@@ -2,12 +2,20 @@ package maildir
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/emersion/go-imap/utf7"
 )
+
+type mailInfo struct {
+	size int64
+	time time.Time
+}
 
 func AggregateMailFolders(rootMailFolderPath string, aggregator Aggregator) error {
 
@@ -70,7 +78,7 @@ func aggregateMails(dirPath string, aggregator Aggregator) error {
 			return err
 		}
 
-		if err := aggregator.Aggregate(info); err != nil {
+		if err := aggregator.Aggregate(mailInfoOf(info)); err != nil {
 			return err
 		}
 	}
@@ -86,4 +94,22 @@ func decodeFolderName(encodedName string) (string, error) {
 		return "", fmt.Errorf("%s is invalid folder name: %w", encodedName, err)
 	}
 	return decodedName, nil
+}
+
+func mailInfoOf(fileInfo fs.FileInfo) mailInfo {
+	// ファイル名の先頭部分がUnix時間
+	// 例: 1674617693.M958571P8888.localhost.localdomain,S=545,W=562:2,S
+	//     -> 1674617693 がUnix時間
+	unixtimePart := strings.Split(fileInfo.Name(), ".")[0]
+	unixtime, err := strconv.ParseInt(unixtimePart, 10, 64)
+	if err != nil {
+		unixtime = 0
+	}
+
+	time := time.Unix(unixtime, 0)
+
+	return mailInfo{
+		time: time,
+		size: fileInfo.Size(),
+	}
 }

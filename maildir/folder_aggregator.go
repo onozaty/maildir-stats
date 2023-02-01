@@ -1,9 +1,5 @@
 package maildir
 
-import (
-	"io/fs"
-)
-
 type FolderAggregator struct {
 	Results []*AggregateResult
 	current *AggregateResult
@@ -25,9 +21,9 @@ func (a *FolderAggregator) Start(mailFolderName string) {
 	a.Results = append(a.Results, a.current)
 }
 
-func (a *FolderAggregator) Aggregate(fileInfo fs.FileInfo) error {
+func (a *FolderAggregator) Aggregate(mail mailInfo) error {
 	a.current.Count++
-	a.current.TotalSize += fileInfo.Size()
+	a.current.TotalSize += mail.size
 
 	return nil
 }

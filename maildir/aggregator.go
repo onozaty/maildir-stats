@@ -1,7 +1,6 @@
 package maildir
 
 import (
-	"io/fs"
 	"sort"
 )
 
@@ -40,5 +39,5 @@ func SortByTotalSize(results []*AggregateResult) {
 
 type Aggregator interface {
 	Start(mailFolderName string)
-	Aggregate(fileInfo fs.FileInfo) error
+	Aggregate(mail mailInfo) error
 }

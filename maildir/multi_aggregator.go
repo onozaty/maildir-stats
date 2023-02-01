@@ -1,9 +1,5 @@
 package maildir
 
-import (
-	"io/fs"
-)
-
 type MultiAggregator struct {
 	aggregators []Aggregator
 }
@@ -21,10 +17,10 @@ func (a *MultiAggregator) Start(mailFolderName string) {
 	}
 }
 
-func (a *MultiAggregator) Aggregate(fileInfo fs.FileInfo) error {
+func (a *MultiAggregator) Aggregate(mail mailInfo) error {
 
 	for _, aggregator := range a.aggregators {
-		aggregator.Aggregate(fileInfo)
+		aggregator.Aggregate(mail)
 	}
 	return nil
 }
