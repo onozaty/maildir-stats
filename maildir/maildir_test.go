@@ -79,7 +79,7 @@ func TestAggregateMailFolders(t *testing.T) {
 	// ASSERT
 	require.NoError(t, err)
 
-	results := aggregator.Results
+	results := aggregator.Results()
 	SortByName(results)
 	assert.Equal(
 		t,
@@ -186,13 +186,13 @@ func TestAggregateMailFolder(t *testing.T) {
 
 	// ACT
 	aggregator := NewFolderAggregator()
-	aggregator.Start("INBOX")
+	aggregator.StartMailFolder("INBOX")
 	err := aggregateMailFolder(temp, aggregator)
 
 	// ASSERT
 	require.NoError(t, err)
 
-	results := aggregator.Results
+	results := aggregator.Results()
 	SortByName(results)
 	assert.Equal(
 		t,
@@ -219,7 +219,7 @@ func TestAggregateMailFolder_SubFolderNotFound(t *testing.T) {
 
 	// ACT
 	aggregator := NewFolderAggregator()
-	aggregator.Start("INBOX")
+	aggregator.StartMailFolder("INBOX")
 	err := aggregateMailFolder(temp, aggregator)
 
 	// ASSERT
@@ -267,7 +267,7 @@ func TestMailInfoOf(t *testing.T) {
 
 		// ASSERT
 		assert.Equal(t, int64(1), mail.size)
-		assert.Equal(t, "2017-04-11T20:16:33Z", mail.time.UTC().Format(time.RFC3339))
+		assert.Equal(t, "2017-04-11T20:16:33Z", mail.time.Format(time.RFC3339))
 	}
 
 	{
@@ -280,7 +280,7 @@ func TestMailInfoOf(t *testing.T) {
 
 		// ASSERT
 		assert.Equal(t, int64(3), mail.size)
-		assert.Equal(t, "2017-04-11T20:16:33Z", mail.time.UTC().Format(time.RFC3339))
+		assert.Equal(t, "2017-04-11T20:16:33Z", mail.time.Format(time.RFC3339))
 	}
 
 	{
@@ -293,7 +293,7 @@ func TestMailInfoOf(t *testing.T) {
 
 		// ASSERT
 		assert.Equal(t, int64(0), mail.size)
-		assert.Equal(t, "1970-01-01T00:00:00Z", mail.time.UTC().Format(time.RFC3339))
+		assert.Equal(t, "1970-01-01T00:00:00Z", mail.time.Format(time.RFC3339))
 	}
 }
 

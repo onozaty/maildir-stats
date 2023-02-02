@@ -1,29 +1,31 @@
 package maildir
 
 type FolderAggregator struct {
-	Results []*AggregateResult
+	results []*AggregateResult
 	current *AggregateResult
 }
 
 func NewFolderAggregator() *FolderAggregator {
 	return &FolderAggregator{
-		Results: []*AggregateResult{},
+		results: []*AggregateResult{},
 	}
 }
 
-func (a *FolderAggregator) Start(mailFolderName string) {
+func (a *FolderAggregator) StartMailFolder(mailFolderName string) {
 
 	a.current = &AggregateResult{
 		Name:      mailFolderName,
 		Count:     0,
 		TotalSize: 0,
 	}
-	a.Results = append(a.Results, a.current)
+	a.results = append(a.results, a.current)
 }
 
-func (a *FolderAggregator) Aggregate(mail mailInfo) error {
+func (a *FolderAggregator) Aggregate(mail mailInfo) {
 	a.current.Count++
 	a.current.TotalSize += mail.size
+}
 
-	return nil
+func (a *FolderAggregator) Results() []*AggregateResult {
+	return a.results
 }

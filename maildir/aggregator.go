@@ -38,6 +38,6 @@ func SortByTotalSize(results []*AggregateResult) {
 }
 
 type Aggregator interface {
-	Start(mailFolderName string)
-	Aggregate(mail mailInfo) error
+	StartMailFolder(mailFolderName string)
+	Aggregate(mail mailInfo)
 }

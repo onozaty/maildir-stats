@@ -20,7 +20,7 @@ type mailInfo struct {
 func AggregateMailFolders(rootMailFolderPath string, aggregator Aggregator) error {
 
 	// ルート(INBOX)
-	aggregator.Start("")
+	aggregator.StartMailFolder("")
 	if err := aggregateMailFolder(rootMailFolderPath, aggregator); err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func AggregateMailFolders(rootMailFolderPath string, aggregator Aggregator) erro
 				return err
 			}
 
-			aggregator.Start(mailFolderName)
+			aggregator.StartMailFolder(mailFolderName)
 			if err := aggregateMailFolder(filepath.Join(rootMailFolderPath, entry.Name()), aggregator); err != nil {
 				return err
 			}
@@ -78,9 +78,7 @@ func aggregateMails(dirPath string, aggregator Aggregator) error {
 			return err
 		}
 
-		if err := aggregator.Aggregate(mailInfoOf(info)); err != nil {
-			return err
-		}
+		aggregator.Aggregate(mailInfoOf(info))
 	}
 
 	return nil
@@ -106,7 +104,7 @@ func mailInfoOf(fileInfo fs.FileInfo) mailInfo {
 		unixtime = 0
 	}
 
-	time := time.Unix(unixtime, 0)
+	time := time.Unix(unixtime, 0).UTC() // UTCで扱う
 
 	return mailInfo{
 		time: time,

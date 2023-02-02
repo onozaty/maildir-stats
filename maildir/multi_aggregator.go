@@ -10,17 +10,16 @@ func NewMultiAggregator(aggregators []Aggregator) *MultiAggregator {
 	}
 }
 
-func (a *MultiAggregator) Start(mailFolderName string) {
+func (a *MultiAggregator) StartMailFolder(mailFolderName string) {
 
 	for _, aggregator := range a.aggregators {
-		aggregator.Start(mailFolderName)
+		aggregator.StartMailFolder(mailFolderName)
 	}
 }
 
-func (a *MultiAggregator) Aggregate(mail mailInfo) error {
+func (a *MultiAggregator) Aggregate(mail mailInfo) {
 
 	for _, aggregator := range a.aggregators {
 		aggregator.Aggregate(mail)
 	}
-	return nil
 }
