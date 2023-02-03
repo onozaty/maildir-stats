@@ -10,11 +10,30 @@ import (
 	"time"
 
 	"github.com/emersion/go-imap/utf7"
+	"github.com/onozaty/maildir-stats/user"
 )
 
 type mailInfo struct {
 	size int64
 	time time.Time
+}
+
+func AggregateUsers(users []user.User, mailDirName string, aggregator Aggregator) error {
+
+	for _, user := range users {
+
+		// ユーザのhomeディレクトリにメールディレクトリがあった場合のみ対象に
+		userMailFolderPath := filepath.Join(user.HomeDir, mailDirName)
+		if file, err := os.Stat(userMailFolderPath); err != nil || !file.IsDir() {
+			continue
+		}
+
+		aggregator.StartUser(user.Name)
+		if err := AggregateMailFolders(userMailFolderPath, aggregator); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func AggregateMailFolders(rootMailFolderPath string, aggregator Aggregator) error {

@@ -8,9 +8,182 @@ import (
 	"testing"
 	"time"
 
+	"github.com/onozaty/maildir-stats/user"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestAggregateUsers(t *testing.T) {
+
+	// ARRANGE
+	temp := t.TempDir()
+
+	users := []user.User{}
+	{
+		// user1
+		userName := "user1"
+		homeDir := createDir(t, temp, userName)
+		users = append(users, user.User{
+			Name:    userName,
+			HomeDir: homeDir,
+		})
+
+		mailDir := createDir(t, homeDir, "Maildir")
+		createMailFolder(t, mailDir, []mail{
+			{"new/1667260800", 1}, // 2022-11-01
+			{"cur/1669852800", 2}, // 2022-12-01
+		})
+		{
+			sub := createDir(t, mailDir, ".A")
+			createMailFolder(t, sub, []mail{
+				{"new/1672531200", 11}, // 2023-01-01
+				{"cur/1675209600", 12}, // 2023-02-01
+			})
+		}
+		{
+			sub := createDir(t, mailDir, ".B")
+			createMailFolder(t, sub, []mail{
+				{"new/1669766400", 21}, // 2022-11-30
+				{"cur/1672444800", 22}, // 2022-12-31
+			})
+		}
+	}
+	{
+		// user2
+		userName := "user2"
+		homeDir := createDir(t, temp, userName)
+		users = append(users, user.User{
+			Name:    userName,
+			HomeDir: homeDir,
+		})
+
+		mailDir := createDir(t, homeDir, "Maildir")
+		createMailFolder(t, mailDir, []mail{
+			{"cur/1640908800", 1}, // 2021-12-31
+		})
+		{
+			sub := createDir(t, mailDir, ".Z")
+			createMailFolder(t, sub, []mail{
+				{"new/1638316800", 11}, // 2021-12-01
+			})
+		}
+	}
+	{
+		// user3
+		userName := "user3"
+		homeDir := createDir(t, temp, userName)
+		users = append(users, user.User{
+			Name:    userName,
+			HomeDir: homeDir,
+		})
+
+		mailDir := createDir(t, homeDir, "Maildir")
+		createMailFolder(t, mailDir, []mail{
+			{"cur/1667260800", 1}, // 2022-11-01
+			{"cur/1669852800", 2}, // 2022-12-01
+			{"cur/1672531200", 3}, // 2023-01-01
+		})
+	}
+	{
+		// user4
+		userName := "user4"
+		homeDir := createDir(t, temp, userName)
+		users = append(users, user.User{
+			Name:    userName,
+			HomeDir: homeDir,
+		})
+
+		// Maildirなし
+	}
+
+	userAggregator := NewUserAggregator()
+	yearAggregator := NewYearAggregator()
+	monthAggregator := NewMonthAggregator()
+	multiAggregator := NewMultiAggregator(
+		[]Aggregator{
+			userAggregator,
+			yearAggregator,
+			monthAggregator,
+		},
+	)
+
+	// ACT
+	err := AggregateUsers(users, "Maildir", multiAggregator)
+
+	// ASSERT
+	require.NoError(t, err)
+	{
+		results := userAggregator.Results()
+		SortByName(results)
+		assert.Equal(
+			t,
+			[]*AggregateResult{
+				{Name: "user1", Count: 6, TotalSize: 69},
+				{Name: "user2", Count: 2, TotalSize: 12},
+				{Name: "user3", Count: 3, TotalSize: 6},
+			},
+			results,
+		)
+	}
+	{
+		results := yearAggregator.Results()
+		SortByName(results)
+		assert.Equal(
+			t,
+			[]*AggregateResult{
+				{Name: "2021", Count: 2, TotalSize: 12},
+				{Name: "2022", Count: 6, TotalSize: 49},
+				{Name: "2023", Count: 3, TotalSize: 26},
+			},
+			results,
+		)
+	}
+	{
+		results := monthAggregator.Results()
+		SortByName(results)
+		assert.Equal(
+			t,
+			[]*AggregateResult{
+				{Name: "2021-12", Count: 2, TotalSize: 12},
+				{Name: "2022-11", Count: 3, TotalSize: 23},
+				{Name: "2022-12", Count: 3, TotalSize: 26},
+				{Name: "2023-01", Count: 2, TotalSize: 14},
+				{Name: "2023-02", Count: 1, TotalSize: 12},
+			},
+			results,
+		)
+	}
+}
+
+func TestAggregateUsers_FolderNotFound(t *testing.T) {
+
+	// ARRANGE
+	temp := t.TempDir()
+
+	users := []user.User{}
+
+	// user1
+	userName := "user1"
+	homeDir := createDir(t, temp, userName)
+	users = append(users, user.User{
+		Name:    userName,
+		HomeDir: homeDir,
+	})
+
+	mailDir := createDir(t, homeDir, "Maildir")
+	// 配下に何もなし
+
+	userAggregator := NewUserAggregator()
+
+	// ACT
+	err := AggregateUsers(users, "Maildir", userAggregator)
+
+	// ASSERT
+	require.Error(t, err)
+	// OSによってエラーメッセージが異なるのでファイル名部分だけチェック
+	expect := "open " + filepath.Join(mailDir, "new")
+	assert.Contains(t, err.Error(), expect)
+}
 
 func TestAggregateMailFolders(t *testing.T) {
 

@@ -11,6 +11,10 @@ func NewFolderAggregator() *FolderAggregator {
 	}
 }
 
+func (a *FolderAggregator) StartUser(userName string) {
+	// 何もしない
+}
+
 func (a *FolderAggregator) StartMailFolder(mailFolderName string) {
 
 	a.current = &AggregateResult{

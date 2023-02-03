@@ -33,6 +33,10 @@ func NewMonthAggregator() *TimeAggregator {
 	}
 }
 
+func (a *TimeAggregator) StartUser(userName string) {
+	// 何もしない
+}
+
 func (a *TimeAggregator) StartMailFolder(mailFolderName string) {
 	// 何もしない
 }

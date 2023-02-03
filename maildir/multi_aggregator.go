@@ -10,6 +10,12 @@ func NewMultiAggregator(aggregators []Aggregator) *MultiAggregator {
 	}
 }
 
+func (a *MultiAggregator) StartUser(userName string) {
+	for _, aggregator := range a.aggregators {
+		aggregator.StartUser(userName)
+	}
+}
+
 func (a *MultiAggregator) StartMailFolder(mailFolderName string) {
 
 	for _, aggregator := range a.aggregators {
