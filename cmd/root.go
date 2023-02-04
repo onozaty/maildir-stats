@@ -10,7 +10,7 @@ func newRootCmd() *cobra.Command {
 
 	rootCmd := &cobra.Command{
 		Use:   "maildir-stats",
-		Short: "report maildir statistics",
+		Short: "Report maildir statistics",
 		Run: func(cmd *cobra.Command, args []string) {
 			_ = cmd.Help()
 		},
@@ -21,6 +21,7 @@ func newRootCmd() *cobra.Command {
 	}
 
 	rootCmd.AddCommand(newVersionCmd())
+	rootCmd.AddCommand(newUserCmd())
 
 	for _, c := range rootCmd.Commands() {
 		// フラグ以外は受け付けないように

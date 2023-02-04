@@ -13,7 +13,7 @@ var (
 
 func newVersionCmd() *cobra.Command {
 
-	versionCmd := &cobra.Command{
+	subCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Show maildir-stats command version",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -31,5 +31,5 @@ Arch: %s
 		},
 	}
 
-	return versionCmd
+	return subCmd
 }
