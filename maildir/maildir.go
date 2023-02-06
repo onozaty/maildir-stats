@@ -18,12 +18,12 @@ type mailInfo struct {
 	time time.Time
 }
 
-func AggregateUsers(users []user.User, mailDirName string, inboxFolderName string, aggregator Aggregator) error {
+func AggregateUsers(users []user.User, maildirName string, inboxFolderName string, aggregator Aggregator) error {
 
 	for _, user := range users {
 
 		// ユーザのhomeディレクトリにメールディレクトリがあった場合のみ対象に
-		userMailFolderPath := filepath.Join(user.HomeDir, mailDirName)
+		userMailFolderPath := filepath.Join(user.HomeDir, maildirName)
 		if file, err := os.Stat(userMailFolderPath); err != nil || !file.IsDir() {
 			continue
 		}
