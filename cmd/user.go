@@ -20,11 +20,22 @@ func newUserCmd() *cobra.Command {
 			maildirPath, _ := cmd.Flags().GetString("dir")
 
 			reportFolder, _ := cmd.Flags().GetBool("folder")
-			reportFolderSortCondition, _ := getSortCondition(cmd.Flags(), "sort-folder")
+			reportFolderSortCondition, err := getSortCondition(cmd.Flags(), "sort-folder")
+			if err != nil { // 許可されていなパラメータの可能性あり
+				return err
+			}
+
 			reportYear, _ := cmd.Flags().GetBool("year")
-			reportYearSortCondition, _ := getSortCondition(cmd.Flags(), "sort-year")
+			reportYearSortCondition, err := getSortCondition(cmd.Flags(), "sort-year")
+			if err != nil { // 許可されていなパラメータの可能性あり
+				return err
+			}
+
 			reportMonth, _ := cmd.Flags().GetBool("month")
-			reportMonthSortCondition, _ := getSortCondition(cmd.Flags(), "sort-month")
+			reportMonthSortCondition, err := getSortCondition(cmd.Flags(), "sort-month")
+			if err != nil { // 許可されていなパラメータの可能性あり
+				return err
+			}
 
 			// 引数の解析に成功した時点で、エラーが起きてもUsageは表示しない
 			cmd.SilenceUsage = true
@@ -47,11 +58,11 @@ func newUserCmd() *cobra.Command {
 	subCmd.MarkFlagRequired("dir")
 
 	subCmd.Flags().BoolP("folder", "f", false, "Report by folder.")
-	subCmd.Flags().StringP("sort-folder", "", "", "Sorting condition for report by folder. You can specify name or count or size. (default is name)")
+	subCmd.Flags().StringP("sort-folder", "", "", "Sorting condition for report by folder.\ncan be specified: name-asc (default), name-desc, count-asc, count-desc, size-asc, size-desc")
 	subCmd.Flags().BoolP("year", "y", false, "Report by year.")
-	subCmd.Flags().StringP("sort-year", "", "", "Sorting condition for report by year. You can specify name or count or size. (default is name)")
+	subCmd.Flags().StringP("sort-year", "", "", "Sorting condition for report by year.\ncan be specified: name-asc (default), name-desc, count-asc, count-desc, size-asc, size-desc")
 	subCmd.Flags().BoolP("month", "m", false, "Report by month.")
-	subCmd.Flags().StringP("sort-month", "", "", "Sorting condition for report by month. You can specify name or count or size. (default is name)")
+	subCmd.Flags().StringP("sort-month", "", "", "Sorting condition for report by month.\ncan be specified: name-asc (default), name-desc, count-asc, count-desc, size-asc, size-desc")
 
 	return subCmd
 }
@@ -159,7 +170,7 @@ func renderTableLayout(writer io.Writer, results []*maildir.AggregateResult, nam
 	table := tablewriter.NewWriter(writer)
 	table.SetAutoFormatHeaders(false)
 	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_RIGHT, tablewriter.ALIGN_RIGHT})
 	table.SetBorder(false)
 	table.SetHeader([]string{nameTitle, "Number of mails", "Total size(byte)"})
 
