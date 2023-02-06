@@ -108,7 +108,7 @@ func TestAggregateUsers(t *testing.T) {
 	)
 
 	// ACT
-	err := AggregateUsers(users, "Maildir", multiAggregator)
+	err := AggregateUsers(users, "Maildir", "", multiAggregator)
 
 	// ASSERT
 	require.NoError(t, err)
@@ -176,7 +176,7 @@ func TestAggregateUsers_FolderNotFound(t *testing.T) {
 	userAggregator := NewUserAggregator()
 
 	// ACT
-	err := AggregateUsers(users, "Maildir", userAggregator)
+	err := AggregateUsers(users, "Maildir", "", userAggregator)
 
 	// ASSERT
 	require.Error(t, err)
@@ -247,7 +247,7 @@ func TestAggregateMailFolders(t *testing.T) {
 
 	// ACT
 	aggregator := NewFolderAggregator()
-	err := AggregateMailFolders(temp, aggregator)
+	err := AggregateMailFolders(temp, "", aggregator)
 
 	// ASSERT
 	require.NoError(t, err)
@@ -268,6 +268,89 @@ func TestAggregateMailFolders(t *testing.T) {
 	)
 }
 
+func TestAggregateMailFolders_InboxFolderName(t *testing.T) {
+
+	// ARRANGE
+	temp := t.TempDir()
+
+	// INBOX
+	createMailFolder(t, temp, []mail{
+		{"new/1", 1},
+		{"new/2", 2},
+		{"cur/3", 3},
+		{"cur/4", 4},
+		{"tmp/5", 5},
+		{"tmp/6", 6},
+	})
+
+	// その他フォルダ
+	{
+		sub := createDir(t, temp, ".A")
+		createMailFolder(t, sub, []mail{
+			{"new/11", 11},
+			{"cur/12", 12},
+			{"tmp/13", 13},
+		})
+	}
+	{
+		sub := createDir(t, temp, ".B")
+		createMailFolder(t, sub, []mail{
+			{"new/21", 21},
+		})
+	}
+	{
+		sub := createDir(t, temp, ".C")
+		createMailFolder(t, sub, []mail{
+			{"cur/31", 31},
+		})
+	}
+	{
+		sub := createDir(t, temp, ".D")
+		createMailFolder(t, sub, []mail{
+			{"tmp/41", 41},
+		})
+	}
+	{
+		// マルチバイトが入ったフォルダ名(テスト)
+		sub := createDir(t, temp, ".&MMYwuTDI-")
+		createMailFolder(t, sub, []mail{
+			{"cur/51", 51},
+			{"cur/52", 52},
+		})
+	}
+	{
+		// メールフォルダ以外のフォルダ(先頭に"."無し)
+		sub := createDir(t, temp, "a")
+		createMailFolder(t, sub, []mail{
+			{"new/61", 61},
+			{"cur/62", 62},
+			{"tmp/63", 63},
+		})
+	}
+
+	// ACT
+	aggregator := NewFolderAggregator()
+	err := AggregateMailFolders(temp, "INBOX", aggregator) // INBOXのフォルダ名を指定
+
+	// ASSERT
+	require.NoError(t, err)
+
+	results := aggregator.Results()
+	SortByName(results)
+	assert.Equal(
+		t,
+		[]*AggregateResult{
+			{Name: "A", Count: 2, TotalSize: 23},
+			{Name: "B", Count: 1, TotalSize: 21},
+			{Name: "C", Count: 1, TotalSize: 31},
+			{Name: "D", Count: 0, TotalSize: 0},
+			{Name: "INBOX", Count: 4, TotalSize: 10},
+			{Name: "テスト", Count: 2, TotalSize: 103},
+		},
+		results,
+	)
+}
+
 func TestAggregateMailFolders_RootFolderNotFound(t *testing.T) {
 
 	// ARRANGE
@@ -276,7 +359,7 @@ func TestAggregateMailFolders_RootFolderNotFound(t *testing.T) {
 
 	// ACT
 	aggregator := NewFolderAggregator()
-	err := AggregateMailFolders(rootMailFolderPath, aggregator)
+	err := AggregateMailFolders(rootMailFolderPath, "", aggregator)
 
 	// ASSERT
 	require.Error(t, err)
@@ -306,7 +389,7 @@ func TestAggregateMailFolders_InvalidFolderName(t *testing.T) {
 
 	// ACT
 	aggregator := NewFolderAggregator()
-	err := AggregateMailFolders(temp, aggregator)
+	err := AggregateMailFolders(temp, "", aggregator)
 
 	// ASSERT
 	assert.EqualError(t, err, "&A is invalid folder name: utf7: invalid UTF-7")
@@ -330,7 +413,7 @@ func TestAggregateMailFolders_SubFolderAggregateFailed(t *testing.T) {
 
 	// ACT
 	aggregator := NewFolderAggregator()
-	err := AggregateMailFolders(temp, aggregator)
+	err := AggregateMailFolders(temp, "", aggregator)
 
 	// ASSERT
 	require.Error(t, err)

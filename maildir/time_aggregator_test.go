@@ -45,7 +45,7 @@ func TestAggregateMailFolders_MonthAggregator(t *testing.T) {
 
 	// ACT
 	aggregator := NewMonthAggregator()
-	err := AggregateMailFolders(temp, aggregator)
+	err := AggregateMailFolders(temp, "", aggregator)
 
 	// ASSERT
 	require.NoError(t, err)
@@ -102,7 +102,7 @@ func TestAggregateMailFolders_YearAggregator(t *testing.T) {
 
 	// ACT
 	aggregator := NewYearAggregator()
-	err := AggregateMailFolders(temp, aggregator)
+	err := AggregateMailFolders(temp, "", aggregator)
 
 	// ASSERT
 	require.NoError(t, err)

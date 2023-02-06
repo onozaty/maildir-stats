@@ -50,7 +50,7 @@ func getSortCondition(f *pflag.FlagSet, name string) (SortCondition, error) {
 	str, _ := f.GetString(name)
 
 	switch str {
-	case "", "name-asc":
+	case "name-asc":
 		return NameAsc, nil
 	case "name-desc":
 		return NameDesc, nil

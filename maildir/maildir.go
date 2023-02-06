@@ -18,7 +18,7 @@ type mailInfo struct {
 	time time.Time
 }
 
-func AggregateUsers(users []user.User, mailDirName string, aggregator Aggregator) error {
+func AggregateUsers(users []user.User, mailDirName string, inboxFolderName string, aggregator Aggregator) error {
 
 	for _, user := range users {
 
@@ -29,17 +29,17 @@ func AggregateUsers(users []user.User, mailDirName string, aggregator Aggregator
 		}
 
 		aggregator.StartUser(user.Name)
-		if err := AggregateMailFolders(userMailFolderPath, aggregator); err != nil {
+		if err := AggregateMailFolders(userMailFolderPath, inboxFolderName, aggregator); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func AggregateMailFolders(rootMailFolderPath string, aggregator Aggregator) error {
+func AggregateMailFolders(rootMailFolderPath string, inboxFolderName string, aggregator Aggregator) error {
 
 	// ルート(INBOX)
-	aggregator.StartMailFolder("")
+	aggregator.StartMailFolder(inboxFolderName)
 	if err := aggregateMailFolder(rootMailFolderPath, aggregator); err != nil {
 		return err
 	}

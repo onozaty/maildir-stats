@@ -76,6 +76,44 @@ Total size      : 3,340 byte
 	assert.Equal(t, expected, result)
 }
 
+func TestUserCmd_Folder_InboxFolderName(t *testing.T) {
+
+	// ARRANGE
+	temp := t.TempDir()
+	setupTestUserMaildir(t, temp)
+
+	rootCmd := newRootCmd()
+	rootCmd.SetArgs([]string{
+		"user",
+		"-d", temp,
+		"-f",
+		"--inbox-name", "INBOX",
+	})
+
+	buf := new(bytes.Buffer)
+	rootCmd.SetOutput(buf)
+
+	err := rootCmd.Execute()
+	require.NoError(t, err)
+
+	result := buf.String()
+	expected := `[Summary]
+Number of mails : 10
+Total size      : 3,340 byte
+
+[Folder]
+  Name   | Number of mails | Total size(byte)  
+---------+-----------------+-------------------
+  A      |               2 |               30  
+  B      |               2 |              300  
+  C      |               0 |                0  
+  INBOX  |               4 |               10  
+  テスト |               2 |            3,000  
+
+`
+	assert.Equal(t, expected, result)
+}
+
 func TestUserCmd_Folder_SortNameAsc(t *testing.T) {
 
 	// ARRANGE

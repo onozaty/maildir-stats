@@ -37,6 +37,8 @@ func newUserCmd() *cobra.Command {
 				return err
 			}
 
+			inboxFolderName, _ := cmd.Flags().GetString("inbox-name")
+
 			// 引数の解析に成功した時点で、エラーが起きてもUsageは表示しない
 			cmd.SilenceUsage = true
 
@@ -50,6 +52,7 @@ func newUserCmd() *cobra.Command {
 					reportMonth:               reportMonth,
 					reportMonthSortCondition:  reportMonthSortCondition,
 				},
+				inboxFolderName,
 				cmd.OutOrStdout())
 		},
 	}
@@ -58,11 +61,13 @@ func newUserCmd() *cobra.Command {
 	subCmd.MarkFlagRequired("dir")
 
 	subCmd.Flags().BoolP("folder", "f", false, "Report by folder.")
-	subCmd.Flags().StringP("sort-folder", "", "", "Sorting condition for report by folder.\ncan be specified: name-asc (default), name-desc, count-asc, count-desc, size-asc, size-desc")
+	subCmd.Flags().StringP("sort-folder", "", "name-asc", "Sorting condition for report by folder.\ncan be specified: name-asc, name-desc, count-asc, count-desc, size-asc, size-desc")
 	subCmd.Flags().BoolP("year", "y", false, "Report by year.")
-	subCmd.Flags().StringP("sort-year", "", "", "Sorting condition for report by year.\ncan be specified: name-asc (default), name-desc, count-asc, count-desc, size-asc, size-desc")
+	subCmd.Flags().StringP("sort-year", "", "name-asc", "Sorting condition for report by year.\ncan be specified: name-asc, name-desc, count-asc, count-desc, size-asc, size-desc")
 	subCmd.Flags().BoolP("month", "m", false, "Report by month.")
-	subCmd.Flags().StringP("sort-month", "", "", "Sorting condition for report by month.\ncan be specified: name-asc (default), name-desc, count-asc, count-desc, size-asc, size-desc")
+	subCmd.Flags().StringP("sort-month", "", "name-asc", "Sorting condition for report by month.\ncan be specified: name-asc, name-desc, count-asc, count-desc, size-asc, size-desc")
+
+	subCmd.Flags().StringP("inbox-name", "", "", "The name of the inbox folder. (default \"\")")
 
 	return subCmd
 }
@@ -76,7 +81,7 @@ type userReportCondition struct {
 	reportMonthSortCondition  SortCondition
 }
 
-func runUserReport(maildirPath string, condition userReportCondition, writer io.Writer) error {
+func runUserReport(maildirPath string, condition userReportCondition, inboxFolderName string, writer io.Writer) error {
 
 	// Summaryを集計するためにもFolderAggregatorはデフォルトで用意する
 	folderAggregator := maildir.NewFolderAggregator()
@@ -94,7 +99,7 @@ func runUserReport(maildirPath string, condition userReportCondition, writer io.
 		aggregators = append(aggregators, monthAggregator)
 	}
 
-	if err := maildir.AggregateMailFolders(maildirPath, maildir.NewMultiAggregator(aggregators)); err != nil {
+	if err := maildir.AggregateMailFolders(maildirPath, inboxFolderName, maildir.NewMultiAggregator(aggregators)); err != nil {
 		return err
 	}
 

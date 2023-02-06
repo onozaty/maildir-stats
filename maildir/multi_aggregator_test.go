@@ -47,7 +47,7 @@ func TestAggregateMailFolders_MultiAggregator(t *testing.T) {
 	monthAggregator := NewMonthAggregator()
 	folderAggregator := NewFolderAggregator()
 	multiAggregator := NewMultiAggregator([]Aggregator{monthAggregator, folderAggregator})
-	err := AggregateMailFolders(temp, multiAggregator)
+	err := AggregateMailFolders(temp, "{INBOX}", multiAggregator)
 
 	// ASSERT
 	require.NoError(t, err)
@@ -73,10 +73,10 @@ func TestAggregateMailFolders_MultiAggregator(t *testing.T) {
 		assert.Equal(
 			t,
 			[]*AggregateResult{
-				{Name: "", Count: 5, TotalSize: 15},
 				{Name: "A", Count: 2, TotalSize: 23},
 				{Name: "B", Count: 2, TotalSize: 43},
 				{Name: "C", Count: 0, TotalSize: 0},
+				{Name: "{INBOX}", Count: 5, TotalSize: 15},
 			},
 			results,
 		)
