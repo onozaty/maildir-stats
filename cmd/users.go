@@ -9,8 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// テスト用に差し替えられるようにしておく
-var passwdPath = "/etc/passwd"
+const passwdPath = "/etc/passwd"
 
 func newUsersCmd() *cobra.Command {
 
@@ -56,7 +55,7 @@ func newUsersCmd() *cobra.Command {
 		},
 	}
 
-	subCmd.Flags().StringP("mail-dir", "d", "Maildir", "User maildir name.")
+	subCmd.Flags().StringP("mail-dir", "d", "", "User maildir name.")
 	subCmd.MarkFlagRequired("mail-dir")
 
 	subCmd.Flags().BoolP("user", "u", false, "Report by user.")
@@ -80,7 +79,7 @@ type usersReportCondition struct {
 
 func runUsersReport(maildirName string, condition usersReportCondition, writer io.Writer) error {
 
-	users, err := user.UsersFromPasswd(passwdPath)
+	users, err := loadPasswd(passwdPath)
 	if err != nil {
 		return err
 	}
@@ -129,4 +128,11 @@ func runUsersReport(maildirName string, condition usersReportCondition, writer i
 	}
 
 	return nil
+}
+
+// テスト用に差し替え可能にしておく
+var loadPasswd = loadPasswdReal
+
+func loadPasswdReal(passwdPath string) ([]user.User, error) {
+	return user.UsersFromPasswd(passwdPath)
 }

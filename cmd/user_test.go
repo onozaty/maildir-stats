@@ -27,7 +27,10 @@ func TestUserCmd(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -55,7 +58,10 @@ func TestUserCmd_Folder(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -93,7 +99,10 @@ func TestUserCmd_Folder_InboxFolderName(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -131,7 +140,10 @@ func TestUserCmd_Folder_SortNameAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -169,7 +181,10 @@ func TestUserCmd_Folder_SortNameDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -207,7 +222,10 @@ func TestUserCmd_Folder_CountAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -245,7 +263,10 @@ func TestUserCmd_Folder_CountDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -283,7 +304,10 @@ func TestUserCmd_Folder_SizeAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -321,7 +345,10 @@ func TestUserCmd_Folder_SizeDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -358,7 +385,10 @@ func TestUserCmd_Year(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -393,7 +423,10 @@ func TestUserCmd_Year_NameAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -428,7 +461,10 @@ func TestUserCmd_Year_NameDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -463,7 +499,10 @@ func TestUserCmd_Year_CountAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -498,7 +537,10 @@ func TestUserCmd_Year_CountDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -533,7 +575,10 @@ func TestUserCmd_Year_SizeAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -568,7 +613,10 @@ func TestUserCmd_Year_SizeDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -602,7 +650,10 @@ func TestUserCmd_Month(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -640,7 +691,10 @@ func TestUserCmd_Month_NameAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -678,7 +732,10 @@ func TestUserCmd_Month_NameDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -716,7 +773,10 @@ func TestUserCmd_Month_CountAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -754,7 +814,10 @@ func TestUserCmd_Month_CountDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -792,7 +855,10 @@ func TestUserCmd_Month_SizeAsc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -830,7 +896,10 @@ func TestUserCmd_Month_SizeDesc(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -867,7 +936,10 @@ func TestUserCmd_Folder_Year_Month(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCmd.SetOutput(buf)
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.NoError(t, err)
 
 	result := buf.String()
@@ -917,7 +989,10 @@ func TestUserCmd_MaildirNotFound(t *testing.T) {
 		"-d", maildir,
 	})
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	// OSによってエラーメッセージが異なるのでファイル名部分だけチェック
 	expect := "open " + maildir
 	assert.Contains(t, err.Error(), expect)
@@ -937,7 +1012,10 @@ func TestUserCmd_InvalidSortFolder(t *testing.T) {
 		"--sort-folder", "xxx",
 	})
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.EqualError(t, err, "invalid sort condition 'xxx'")
 }
 
@@ -955,7 +1033,10 @@ func TestUserCmd_InvalidSortYear(t *testing.T) {
 		"--sort-year", "xxx",
 	})
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.EqualError(t, err, "invalid sort condition 'xxx'")
 }
 
@@ -973,7 +1054,10 @@ func TestUserCmd_InvalidSortMonth(t *testing.T) {
 		"--sort-month", "xxx",
 	})
 
+	// ACT
 	err := rootCmd.Execute()
+
+	// ASSERT
 	require.EqualError(t, err, "invalid sort condition 'xxx'")
 }
 
