@@ -40,7 +40,7 @@ func AggregateMailFolders(rootMailFolderPath string, inboxFolderName string, agg
 
 	// ルート(INBOX)
 	aggregator.StartMailFolder(inboxFolderName)
-	if err := aggregateMailFolder(rootMailFolderPath, aggregator); err != nil {
+	if err := aggregateMailFolder(rootMailFolderPath, false, aggregator); err != nil {
 		return err
 	}
 
@@ -59,7 +59,8 @@ func AggregateMailFolders(rootMailFolderPath string, inboxFolderName string, agg
 			}
 
 			aggregator.StartMailFolder(mailFolderName)
-			if err := aggregateMailFolder(filepath.Join(rootMailFolderPath, entry.Name()), aggregator); err != nil {
+			// その他メールフォルダは作成直後にcurフォルダなどが無いことがあるので無かったらスキップするように設定
+			if err := aggregateMailFolder(filepath.Join(rootMailFolderPath, entry.Name()), true, aggregator); err != nil {
 				return err
 			}
 		}
@@ -68,10 +69,16 @@ func AggregateMailFolders(rootMailFolderPath string, inboxFolderName string, agg
 	return nil
 }
 
-func aggregateMailFolder(mailFolderPath string, aggregator Aggregator) error {
+func aggregateMailFolder(mailFolderPath string, skipSubdirMissing bool, aggregator Aggregator) error {
 
 	// tmpにあるのは配送中のものなので対象から除いておく
 	for _, subName := range []string{"new", "cur"} {
+		subDir := filepath.Join(mailFolderPath, subName)
+		if _, err := os.Stat(subDir); os.IsNotExist(err) && skipSubdirMissing {
+			// サブディレクトリが無いことを無視する場合はスキップ
+			continue
+		}
+
 		if err := aggregateMails(filepath.Join(mailFolderPath, subName), aggregator); err != nil {
 			return err
 		}

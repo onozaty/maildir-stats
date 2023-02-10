@@ -351,6 +351,42 @@ func TestAggregateMailFolders_InboxFolderName(t *testing.T) {
 	)
 }
 
+func TestAggregateMailFolders_SkipSubFolder(t *testing.T) {
+
+	// ARRANGE
+	temp := t.TempDir()
+
+	// INBOX
+	createMailFolder(t, temp, []mail{
+		{"new/1", 1},
+	})
+
+	// その他フォルダ
+	{
+		// Maildirとしてあるべきフォルダ無し
+		// -> エラーとならずスキップされる
+		createDir(t, temp, ".A")
+	}
+
+	// ACT
+	aggregator := NewFolderAggregator()
+	err := AggregateMailFolders(temp, "", aggregator)
+
+	// ASSERT
+	require.NoError(t, err)
+
+	results := aggregator.Results()
+	SortByName(results)
+	assert.Equal(
+		t,
+		[]*AggregateResult{
+			{Name: "", Count: 1, TotalSize: 1},
+			{Name: "A", Count: 0, TotalSize: 0},
+		},
+		results,
+	)
+}
+
 func TestAggregateMailFolders_RootFolderNotFound(t *testing.T) {
 
 	// ARRANGE
@@ -395,33 +431,6 @@ func TestAggregateMailFolders_InvalidFolderName(t *testing.T) {
 	assert.EqualError(t, err, "&A is invalid folder name: utf7: invalid UTF-7")
 }
 
-func TestAggregateMailFolders_SubFolderAggregateFailed(t *testing.T) {
-
-	// ARRANGE
-	temp := t.TempDir()
-
-	// INBOX
-	createMailFolder(t, temp, []mail{
-		{"new/1", 1},
-	})
-
-	// その他フォルダ
-	{
-		// Maildirとあるべきフォルダ無し
-		createDir(t, temp, ".A")
-	}
-
-	// ACT
-	aggregator := NewFolderAggregator()
-	err := AggregateMailFolders(temp, "", aggregator)
-
-	// ASSERT
-	require.Error(t, err)
-	// OSによってエラーメッセージが異なるのでファイル名部分だけチェック
-	expect := "open " + filepath.Join(temp, ".A", "new")
-	assert.Contains(t, err.Error(), expect)
-}
-
 func TestAggregateMailFolder(t *testing.T) {
 
 	// ARRANGE
@@ -443,7 +452,7 @@ func TestAggregateMailFolder(t *testing.T) {
 	// ACT
 	aggregator := NewFolderAggregator()
 	aggregator.StartMailFolder("INBOX")
-	err := aggregateMailFolder(temp, aggregator)
+	err := aggregateMailFolder(temp, false, aggregator)
 
 	// ASSERT
 	require.NoError(t, err)
@@ -476,13 +485,46 @@ func TestAggregateMailFolder_SubFolderNotFound(t *testing.T) {
 	// ACT
 	aggregator := NewFolderAggregator()
 	aggregator.StartMailFolder("INBOX")
-	err := aggregateMailFolder(temp, aggregator)
+	err := aggregateMailFolder(temp, false, aggregator)
 
 	// ASSERT
 	require.Error(t, err)
 	// OSによってエラーメッセージが異なるのでファイル名部分だけチェック
 	expect := "open " + filepath.Join(temp, "new")
 	assert.Contains(t, err.Error(), expect)
+}
+
+func TestAggregateMailFolder_SubFolderNotFound_Skip(t *testing.T) {
+
+	// ARRANGE
+	temp := t.TempDir()
+
+	{
+		// tmpは対象外
+		tmp := createDir(t, temp, "tmp")
+		createFile(t, filepath.Join(tmp, "5"), "1")
+	}
+
+	createFile(t, filepath.Join(temp, "a"), "a")
+	createFile(t, filepath.Join(temp, "xxx"), "xxx")
+
+	// ACT
+	aggregator := NewFolderAggregator()
+	aggregator.StartMailFolder("INBOX")
+	err := aggregateMailFolder(temp, true, aggregator) // 存在しなくてもスキップするよう指定
+
+	// ASSERT
+	require.NoError(t, err)
+
+	results := aggregator.Results()
+	SortByName(results)
+	assert.Equal(
+		t,
+		[]*AggregateResult{
+			{Name: "INBOX", Count: 0, TotalSize: 0},
+		},
+		results,
+	)
 }
 
 func TestDecodeFolderName(t *testing.T) {
