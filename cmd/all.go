@@ -11,11 +11,11 @@ import (
 
 const passwdPath = "/etc/passwd"
 
-func newUsersCmd() *cobra.Command {
+func newAllCmd() *cobra.Command {
 
 	subCmd := &cobra.Command{
-		Use:   "users",
-		Short: "Report users statistics",
+		Use:   "all",
+		Short: "Report all users statistics",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			maildirName, _ := cmd.Flags().GetString("mail-dir")
@@ -41,9 +41,9 @@ func newUsersCmd() *cobra.Command {
 			// 引数の解析に成功した時点で、エラーが起きてもUsageは表示しない
 			cmd.SilenceUsage = true
 
-			return runUsersReport(
+			return runAllReport(
 				maildirName,
-				usersReportCondition{
+				allReportCondition{
 					reportUser:               reportUser,
 					reportUserSortCondition:  reportUserSortCondition,
 					reportYear:               reportYear,
@@ -68,7 +68,7 @@ func newUsersCmd() *cobra.Command {
 	return subCmd
 }
 
-type usersReportCondition struct {
+type allReportCondition struct {
 	reportUser               bool
 	reportUserSortCondition  SortCondition
 	reportYear               bool
@@ -77,7 +77,7 @@ type usersReportCondition struct {
 	reportMonthSortCondition SortCondition
 }
 
-func runUsersReport(maildirName string, condition usersReportCondition, writer io.Writer) error {
+func runAllReport(maildirName string, condition allReportCondition, writer io.Writer) error {
 
 	users, err := loadPasswd(passwdPath)
 	if err != nil {

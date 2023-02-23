@@ -9,7 +9,7 @@
 `maildir-stats` has the following subcommands
 
 * [user](#user) Report user statistics.
-* [users](#users) Report users statistics.
+* [all](#all) Report all users statistics.
 
 ## user
 
@@ -76,15 +76,15 @@ Total size      : 3,340 byte
   2023-03 |               2 |               12  
 ```
 
-## users
+## all
 
-Report users statistics.  
+Report all users statistics.  
 Target user information is obtained from `/etc/passwd`.
 
 ### Usage
 
 ```
-maildir-stats users -d MAIL_DIR_NAME [-u] [--sort-user SORT_COND] [-y] [--sort-year SORT_COND] [-m] [--sort-month SORT_COND]
+maildir-stats all -d MAIL_DIR_NAME [-u] [--sort-user SORT_COND] [-y] [--sort-year SORT_COND] [-m] [--sort-month SORT_COND]
 ```
 
 ```
