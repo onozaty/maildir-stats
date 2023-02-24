@@ -7,8 +7,11 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/olekukonko/tablewriter"
 	"github.com/onozaty/maildir-stats/maildir"
+	"github.com/onozaty/maildir-stats/user"
 	"github.com/spf13/pflag"
 )
+
+const passwdPath = "/etc/passwd"
 
 type SortCondition int
 
@@ -72,7 +75,7 @@ func getSortCondition(f *pflag.FlagSet, name string) (SortCondition, error) {
 
 func printSummaryReport(writer io.Writer, results []*maildir.AggregateResult) {
 
-	summaryCount := int32(0)
+	summaryCount := int64(0)
 	summaryTotalSize := int64(0)
 
 	for _, result := range results {
@@ -136,4 +139,11 @@ func renderTableLayout(writer io.Writer, results []*maildir.AggregateResult, nam
 	}
 
 	table.Render()
+}
+
+// テスト用に差し替え可能にしておく
+var loadPasswd = loadPasswdReal
+
+func loadPasswdReal(passwdPath string) ([]user.User, error) {
+	return user.UsersFromPasswd(passwdPath)
 }

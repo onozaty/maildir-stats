@@ -6,7 +6,7 @@ import (
 
 type AggregateResult struct {
 	Name      string
-	Count     int32
+	Count     int64
 	TotalSize int64
 }
 

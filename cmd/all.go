@@ -5,11 +5,8 @@ import (
 	"io"
 
 	"github.com/onozaty/maildir-stats/maildir"
-	"github.com/onozaty/maildir-stats/user"
 	"github.com/spf13/cobra"
 )
-
-const passwdPath = "/etc/passwd"
 
 func newAllCmd() *cobra.Command {
 
@@ -128,11 +125,4 @@ func runAllReport(maildirName string, condition allReportCondition, writer io.Wr
 	}
 
 	return nil
-}
-
-// テスト用に差し替え可能にしておく
-var loadPasswd = loadPasswdReal
-
-func loadPasswdReal(passwdPath string) ([]user.User, error) {
-	return user.UsersFromPasswd(passwdPath)
 }
