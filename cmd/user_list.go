@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"path/filepath"
 	"sort"
 
 	"github.com/onozaty/maildir-stats/maildir"
@@ -23,14 +24,14 @@ func newUserListCmd() *cobra.Command {
 
 			sizeLower, _ := cmd.Flags().GetInt64("size-lower")
 			sizeUpper, _ := cmd.Flags().GetInt64("size-upper")
-			if cmd.Flags().Changed("size-upper") {
+			if !cmd.Flags().Changed("size-upper") {
 				// 未設定の場合は、int64の最大値いれておく
 				sizeUpper = math.MaxInt64
 			}
 
 			countLower, _ := cmd.Flags().GetInt64("count-lower")
 			countUpper, _ := cmd.Flags().GetInt64("count-upper")
-			if cmd.Flags().Changed("count-upper") {
+			if !cmd.Flags().Changed("count-upper") {
 				// 未設定の場合は、int64の最大値いれておく
 				countUpper = math.MaxInt64
 			}
@@ -99,7 +100,7 @@ func runUserList(maildirName string, condition userListCondition, writer io.Writ
 	})
 
 	for _, user := range matchUsers {
-		fmt.Fprintf(writer, "%s:%s\n", user.Name, user.HomeDir)
+		fmt.Fprintf(writer, "%s:%s\n", user.Name, filepath.Join(user.HomeDir, maildirName))
 	}
 
 	return nil
@@ -107,5 +108,5 @@ func runUserList(maildirName string, condition userListCondition, writer io.Writ
 
 func (c *userListCondition) within(result *maildir.AggregateResult) bool {
 	return result.Count >= c.countLower && result.Count <= c.countUpper &&
-		result.TotalSize >= c.sizeLower && result.TotalSize <= c.countUpper
+		result.TotalSize >= c.sizeLower && result.TotalSize <= c.sizeUpper
 }
