@@ -10,6 +10,7 @@
 
 * [user](#user) Report user statistics.
 * [all](#all) Report all users statistics.
+* [user-list](#user-list) Output user list.
 
 ## user
 
@@ -140,6 +141,42 @@ Total size      : 6,321 byte
   2023-01 |               2 |            3,003  
   2023-02 |               1 |                4  
 
+```
+
+## user-list
+
+Output user list.  
+Target user information is obtained from `/etc/passwd`.
+
+### Usage
+
+```
+maildir-stats user-list -d MAIL_DIR_NAME [--size-lower SIZE] [--size-upper SIZE] [--count-lower COUNT] [--count-upper COUNT]
+```
+
+```
+Usage:
+  maildir-stats user-list [flags]
+
+Flags:
+  -d, --mail-dir string   User maildir name.
+      --size-lower int    Size lower limit.
+      --size-upper int    Size upper limit.
+      --count-lower int   Count lower limit.
+      --count-upper int   Count upper limit.
+  -h, --help              help for user-list
+```
+
+### Example
+
+Outputs a list of users whose size is 1000 bytes or larger.
+
+```
+$ maildir-stats user-list -d Maildir --size-lower 1000
+
+user1:/home/user1/Maildir
+user2:/home/user2/Maildir
+user4:/home/user4/Maildir
 ```
 
 ## Install
