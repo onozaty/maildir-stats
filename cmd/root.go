@@ -22,7 +22,8 @@ func newRootCmd() *cobra.Command {
 
 	rootCmd.AddCommand(newVersionCmd())
 	rootCmd.AddCommand(newUserCmd())
-	rootCmd.AddCommand(newUsersCmd())
+	rootCmd.AddCommand(newAllCmd())
+	rootCmd.AddCommand(newUserListCmd())
 
 	for _, c := range rootCmd.Commands() {
 		// フラグ以外は受け付けないように

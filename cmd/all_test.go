@@ -10,13 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUsersCmd(t *testing.T) {
+func TestAllCmd(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -25,7 +25,7 @@ func TestUsersCmd(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 	})
 
@@ -47,13 +47,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_Maildir(t *testing.T) {
+func TestAllCmd_Maildir(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "xxx" // デフォルトとは異なる名前で
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -62,7 +62,7 @@ func TestUsersCmd_Maildir(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 	})
 
@@ -84,13 +84,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_User(t *testing.T) {
+func TestAllCmd_User(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -99,7 +99,7 @@ func TestUsersCmd_User(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-u",
 	})
@@ -130,13 +130,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_User_Sort(t *testing.T) {
+func TestAllCmd_User_Sort(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -145,7 +145,7 @@ func TestUsersCmd_User_Sort(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-u",
 		"--sort-user", "name-desc", // ソートは1パターン試す
@@ -177,13 +177,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_Year(t *testing.T) {
+func TestAllCmd_Year(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -192,7 +192,7 @@ func TestUsersCmd_Year(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-y",
 	})
@@ -222,13 +222,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_Year_Sort(t *testing.T) {
+func TestAllCmd_Year_Sort(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -237,7 +237,7 @@ func TestUsersCmd_Year_Sort(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-y",
 		"--sort-year", "size-asc", // ソートは1パターン試す
@@ -268,13 +268,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_Month(t *testing.T) {
+func TestAllCmd_Month(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -283,7 +283,7 @@ func TestUsersCmd_Month(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-m",
 	})
@@ -315,13 +315,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_Month_Sort(t *testing.T) {
+func TestAllCmd_Month_Sort(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -330,7 +330,7 @@ func TestUsersCmd_Month_Sort(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-m",
 		"--sort-month", "count-desc", // ソートは1パターン試す
@@ -363,13 +363,13 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_User_Year_Month(t *testing.T) {
+func TestAllCmd_User_Year_Month(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -378,7 +378,7 @@ func TestUsersCmd_User_Year_Month(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-u", "-y", "-m",
 	})
@@ -425,7 +425,7 @@ Total size      : 6,321 byte
 	assert.Equal(t, expected, result)
 }
 
-func TestUsersCmd_PasswdFileNotFound(t *testing.T) {
+func TestAllCmd_PasswdFileNotFound(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
@@ -440,7 +440,7 @@ func TestUsersCmd_PasswdFileNotFound(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 	})
 
@@ -453,13 +453,13 @@ func TestUsersCmd_PasswdFileNotFound(t *testing.T) {
 	assert.Contains(t, err.Error(), expect)
 }
 
-func TestUsersCmd_FolderNotFound(t *testing.T) {
+func TestAllCmd_FolderNotFound(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// Maildirはあるが、その配下にnew/cur/tmpが無い
 	userName := "user9"
@@ -477,7 +477,7 @@ func TestUsersCmd_FolderNotFound(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 	})
 
@@ -491,13 +491,13 @@ func TestUsersCmd_FolderNotFound(t *testing.T) {
 	assert.Contains(t, err.Error(), expect)
 }
 
-func TestUsersCmd_InvalidSortUser(t *testing.T) {
+func TestAllCmd_InvalidSortUser(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -506,7 +506,7 @@ func TestUsersCmd_InvalidSortUser(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-u",
 		"--sort-user", "xxx",
@@ -519,13 +519,13 @@ func TestUsersCmd_InvalidSortUser(t *testing.T) {
 	require.EqualError(t, err, "invalid sort condition 'xxx'")
 }
 
-func TestUsersCmd_InvalidSortYear(t *testing.T) {
+func TestAllCmd_InvalidSortYear(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -534,7 +534,7 @@ func TestUsersCmd_InvalidSortYear(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-y",
 		"--sort-year", "xxx",
@@ -547,13 +547,13 @@ func TestUsersCmd_InvalidSortYear(t *testing.T) {
 	require.EqualError(t, err, "invalid sort condition 'xxx'")
 }
 
-func TestUsersCmd_InvalidSortMonth(t *testing.T) {
+func TestAllCmd_InvalidSortMonth(t *testing.T) {
 
 	// ARRANGE
 	temp := t.TempDir()
 	maildir := "Maildir"
 
-	users := setupTestUsersMaildir(t, temp, maildir)
+	users := setupTestAllMaildir(t, temp, maildir)
 
 	// テスト用にメソッド差し替え
 	loadPasswd = func(passwdPath string) ([]user.User, error) {
@@ -562,7 +562,7 @@ func TestUsersCmd_InvalidSortMonth(t *testing.T) {
 
 	rootCmd := newRootCmd()
 	rootCmd.SetArgs([]string{
-		"users",
+		"all",
 		"-d", maildir,
 		"-y",
 		"--sort-month", "xxx",
@@ -575,7 +575,7 @@ func TestUsersCmd_InvalidSortMonth(t *testing.T) {
 	require.EqualError(t, err, "invalid sort condition 'xxx'")
 }
 
-func setupTestUsersMaildir(t *testing.T, temp string, maildir string) []user.User {
+func setupTestAllMaildir(t *testing.T, temp string, maildir string) []user.User {
 
 	users := []user.User{}
 	{
